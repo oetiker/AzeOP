@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link rel="SHORTCUT ICON" href="resource/aze_op/favicon.ico"/>
+    <title> AzeOP </title>
+    <style>
+        #cbBlocked
+        {
+            transition: opacity 1s linear;
+        }
+
+        .center
+        {
+            margin: 0 auto;
+        }
+
+        #cbSplashscreen
+        {
+            position    : absolute;
+            top         : 50%;
+            left        : 0;
+            transform   : translateX(0) translateY(-50%);
+            font-size   : 44px;
+            color       : #D6D6D6;
+            font-family : helvetica, sans-serif;
+            letter-spacing: -0.04em;
+            text-align  : center;
+            width       : 100%;
+        }
+
+        #cbStaticProgressBar
+        {
+            position    : absolute;
+            top         : 0;
+            left        : 0;
+            width       : 1px;
+            height      : 2px;
+            background-color: #e00;
+            text-align  : center;
+        }
+
+        #cbStaticProgressMessage
+        {
+            font-size   : 13px;
+            color       : #CFCFCF;
+            font-family : helvetica, sans-serif;
+            line-height : 4em;
+            letter-spacing: 0em;
+            font-weight : normal;
+            display     : none;
+        }
+    </style>
+</head>
+<body id="box" class="home">
+    <div id="cbStaticProgressBar"></div>
+    <div id="cbSplashscreen">AzeOP<div id="cbStaticProgressMessage">&nbsp;</div></div>
+    <div id="cbBlocked" style="opacity:0; font-family: sans-serif; text-align:left; color:#666; max-width:600px; padding-top: 60px; padding-left: 40px; line-height: 1.45em; font-size: 18px; padding-right:40px; margin-left:auto; margin-right:auto">
+            <strong style="color:#333">Is AzeOP blocked?</strong><br/>
+            AzeOP is not able to load. It is probably because one of your extensions is blocking it. If you run Ad-block,
+            HTTPSEverywhere, Awesome screenshot etc.. please make sure that that this site is white listed.<br/>
+    </div>
+    <script>
+    (function(){
+        var cbT0 = new Date().getTime();
+
+        function fromcbT0(){
+            return new Date().getTime() - cbT0;
+        }
+
+
+        var errorTimer = window.setTimeout( function(){
+            // The page has successfully loaded.
+            if( window['qx'] && qx.$$loader.applicationHandlerReady )
+                return;
+            cbHandleError()
+        },15000);
+
+        var pbElem = document.getElementById( "cbStaticProgressBar" );
+        var psElem = document.getElementById( "cbSplashscreen" );
+        var wmElem = document.getElementById( "cbStaticProgressMessage" );
+
+        window.cbHandleError = function() {
+            if ( errorTimer != null ){
+                window.clearTimeout( errorTimer );
+                errorTimer = null;
+            }
+
+            var blockedElemend = document.getElementById( "cbBlocked" );
+            if( blockedElemend != null )
+                blockedElemend.style.opacity = 1;
+            pbElem.style.display = "none";
+            psElm.style.display = "none";
+        }
+
+
+        var cbProgressCounter  = 0;
+        var cbProgressDuration = 500;
+        var cbProgressSteps    = 50;
+
+        var cbProgressInterval = window.setInterval( function(){
+            if( window['qx'] && qx.$$loader.applicationHandlerReady ){
+                window.clearInterval( cbProgressInterval );
+                window.clearInterval( errorTimer );
+                return;
+            }
+            cbProgressCounter++;
+            if( cbProgressCounter > cbProgressSteps ) {
+                window.clearInterval( cbProgressInterval );
+                wmElem.innerHTML = "Welcome!";
+                return;
+            }
+            pbElem.style.width = parseInt ( cbProgressCounter / cbProgressSteps * window.innerWidth ) + "px";
+        }, parseInt( cbProgressDuration / cbProgressSteps ));
+    })();
+    </script>
+    <script type="text/javascript" src="script/aze_op.js?v=#VERSION#" onerror="cbHandleError()"></script>
+    <iframe src="login" style="width:0px;height:0px;border:0px;" id="cbLoginIframe"></iframe>
+</body>
+</html>
